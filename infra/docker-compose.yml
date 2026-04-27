@@ -6,7 +6,7 @@ volumes:
 services:
   db:
     container_name: foodgram-db
-    image: postgres:16-alpine
+    image: postgres:16
     env_file:
       - .env
     volumes:
@@ -22,7 +22,12 @@ services:
       - media:/app/media
     depends_on:
       - db
-    command: gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             mkdir -p /backend_static/static/ &&
+             cp -r /app/static/. /backend_static/static/ &&
+             gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000"
 
   frontend:
     container_name: foodgram-front
