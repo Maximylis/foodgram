@@ -44,6 +44,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f'Ингредиенты загружены. Всего в базе: {Ingredient.objects.count()}'
+                f'Ингредиенты загружены. '
+                f'Всего в базе: {Ingredient.objects.count()}'
             )
         )

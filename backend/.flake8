@@ -1,0 +1,15 @@
+[flake8]
+ignore = 
+    W503
+    F811
+exclude =
+    migrations,
+    __pycache__,
+    venv,
+    env,
+    .venv,
+    .env,
+    static,
+    media
+per-file-ignores =
+    */settings.py:E501
