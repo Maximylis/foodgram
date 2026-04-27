@@ -1,0 +1,27 @@
+name: Foodgram workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  backend_checks:
+    name: Backend checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Build backend image with flake8
+        run: docker compose -f infra/docker-compose.production.yml build backend
+
+  frontend_checks:
+    name: Frontend build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Build frontend image
+        run: docker compose -f infra/docker-compose.production.yml build frontend
