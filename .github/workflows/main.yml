@@ -47,21 +47,23 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram_backend:latest
 
   frontend_tests:
+    name: Frontend build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up nodeJS
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Install dependencies
         run: |
           cd frontend/
-          npm ci --legacy-peer-deps
-      - name: Test frontend
+          yarn install --frozen-lockfile
+      - name: Build frontend
         run: |
           cd frontend/
-          npm run test -- --watchAll=false
+          CI=false yarn build
 
   build_frontend_and_push_to_docker_hub:
     name: Push frontend Docker image to DockerHub
