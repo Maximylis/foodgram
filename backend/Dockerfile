@@ -6,15 +6,15 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir flake8
 
-COPY . .
+COPY backend/ .
+COPY setup.cfg .
 
-RUN flake8 .
+RUN flake8 . --config=setup.cfg
 
 CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0.0.0.0:8000"]
-
