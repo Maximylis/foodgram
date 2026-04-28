@@ -49,16 +49,15 @@ jobs:
   frontend_tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Set up Node.js
+      - uses: actions/checkout@v3
+      - name: Set up nodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: 21
+          node-version: 18
       - name: Install dependencies
         run: |
           cd frontend/
-          npm ci --legacy-peer-deps 
+          npm ci --legacy-peer-deps
       - name: Test frontend
         run: |
           cd frontend/
