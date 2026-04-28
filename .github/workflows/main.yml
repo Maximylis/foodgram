@@ -103,10 +103,10 @@ jobs:
       - name: Push gateway image to DockerHub
         uses: docker/build-push-action@v5
         with:
-          context: ./infra
+          context: .
           file: ./infra/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram_gateway:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_gateway:latest
 
   deploy:
     runs-on: ubuntu-latest
