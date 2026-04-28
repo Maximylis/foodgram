@@ -46,24 +46,24 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram_backend:latest
 
-  frontend_tests:
-    name: Frontend build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Install dependencies
-        run: |
-          cd frontend/
-          yarn install --frozen-lockfile
-      - name: Build frontend
-        run: |
-          cd frontend/
-          CI=false yarn build
+    frontend_tests:
+      name: Frontend build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out the repo
+          uses: actions/checkout@v3
+        - name: Set up Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: 18
+        - name: Install dependencies
+          run: |
+            cd frontend/
+            npm install --legacy-peer-deps
+        - name: Build frontend
+          run: |
+            cd frontend/
+            CI=false npm run build
 
   build_frontend_and_push_to_docker_hub:
     name: Push frontend Docker image to DockerHub
