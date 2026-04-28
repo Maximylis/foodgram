@@ -31,7 +31,7 @@ services:
              gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000"
 
   frontend:
-    container_name: foodgram-front
+    container_name: foodgram-frontend
     image: maximylis/foodgram-frontend:latest
     volumes:
       - frontend_build:/app/result_build/
