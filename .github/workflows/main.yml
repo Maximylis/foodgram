@@ -42,7 +42,7 @@ jobs:
       - name: Push backend image to DockerHub
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
+          context: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram-backend:latest
 
