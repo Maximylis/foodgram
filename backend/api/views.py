@@ -29,7 +29,7 @@ from recipes.models import (
     ShoppingCart,
     Tag,
 )
-from users.models import Subscription
+
 
 User = get_user_model()
 
@@ -94,9 +94,8 @@ class UserViewSet(DjoserUserViewSet):
                 serializer.data,
                 status=status.HTTP_201_CREATED,
             )
-        subscription = Subscription.objects.filter(
-            user=request.user,
-            author=author,
+        subscription = request.user.sybscriptions.filter(
+            author=author
         )
         if not subscription.exists():
             return Response(

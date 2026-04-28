@@ -1,6 +1,13 @@
 from django.conf import settings
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from recipes.constants import (
+    MAX_COOKING_TIME,
+    MAX_INGREDIENT_AMOUNT,
+    MIN_COOKING_TIME,
+    MIN_INGREDIENT_AMOUNT,
+)
 
 
 class Tag(models.Model):
@@ -88,8 +95,18 @@ class Recipe(models.Model):
         'Время приготовления',
         validators=[
             MinValueValidator(
-                1,
-                message='Время приготовления должно быть не меньше 1 минуты.'
+                MIN_COOKING_TIME,
+                message=(
+                    'Время приготовления должно быть '
+                    f'не меньше {MIN_COOKING_TIME} минуты.'
+                ),
+            ),
+            MaxValueValidator(
+                MAX_COOKING_TIME,
+                message=(
+                    'Время приготовления должно быть '
+                    f'не больше {MAX_COOKING_TIME} минут.'
+                ),
             ),
         ],
     )
@@ -126,8 +143,18 @@ class RecipeIngredient(models.Model):
         'Количество',
         validators=[
             MinValueValidator(
-                1,
-                message='Количество ингредиента должно быть не меньше 1.'
+                MIN_INGREDIENT_AMOUNT,
+                message=(
+                    'Количество ингредиента должно быть '
+                    f'не меньше {MIN_INGREDIENT_AMOUNT}.'
+                ),
+            ),
+            MaxValueValidator(
+                MAX_INGREDIENT_AMOUNT,
+                message=(
+                    'Количество ингредиента должно быть '
+                    f'не больше {MAX_INGREDIENT_AMOUNT}.'
+                ),
             ),
         ],
     )
@@ -135,6 +162,7 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
+        ordering = ['recipe', 'ingredient']
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
@@ -165,6 +193,7 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
+        ordering = ['user', 'recipe']
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
@@ -195,6 +224,7 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
+        ordering = ['user', 'recipe']
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],

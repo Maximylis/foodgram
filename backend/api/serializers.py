@@ -4,6 +4,12 @@ from django.db import transaction
 from rest_framework import serializers
 
 from api.fields import Base64ImageField
+from recipes.constants import (
+    MAX_COOKING_TIME,
+    MAX_INGREDIENT_AMOUNT,
+    MIN_COOKING_TIME,
+    MIN_INGREDIENT_AMOUNT,
+)
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -65,13 +71,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-
         if request is None or request.user.is_anonymous:
             return False
-
-        return Subscription.objects.filter(
-            user=request.user,
-            author=obj,
+        return request.user.subscriptions.filter(
+            author=obj
         ).exists()
 
 
@@ -159,7 +162,10 @@ class RecipeIngredientWriteSerializer(serializers.Serializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
     )
-    amount = serializers.IntegerField(min_value=1)
+    amount = serializers.IntegerField(
+        min_value=MIN_INGREDIENT_AMOUNT,
+        max_value=MAX_INGREDIENT_AMOUNT
+    )
 
 
 class RecipeMinifiedSerializer(serializers.ModelSerializer):
@@ -208,24 +214,18 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
-
         if request is None or request.user.is_anonymous:
             return False
-
-        return Favorite.objects.filter(
-            user=request.user,
-            recipe=obj,
+        return request.user.favorites(
+            recipe=obj
         ).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-
         if request is None or request.user.is_anonymous:
             return False
-
-        return ShoppingCart.objects.filter(
-            user=request.user,
-            recipe=obj,
+        return request.user.shopping_cart.filter(
+            recipe=obj
         ).exists()
 
 
@@ -238,6 +238,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         many=True,
     )
     image = Base64ImageField(required=True)
+    cooking_time = serializers.IntegerField(
+        min_value=MIN_COOKING_TIME,
+        max_value=MAX_COOKING_TIME,
+    )
 
     class Meta:
         model = Recipe
@@ -255,14 +259,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Нужно добавить хотя бы один ингредиент.'
             )
-
         ingredient_ids = [item['id'].id for item in ingredients]
-
         if len(ingredient_ids) != len(set(ingredient_ids)):
             raise serializers.ValidationError(
                 'Ингредиенты не должны повторяться.'
             )
-
         return ingredients
 
     def validate_tags(self, tags):
