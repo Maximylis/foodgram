@@ -44,7 +44,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram_backend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram-backend:latest
 
   frontend_tests:
     name: Frontend build
@@ -107,7 +107,7 @@ jobs:
           context: .
           file: ./infra/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram_gateway:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram-gateway:latest
 
   deploy:
     runs-on: ubuntu-latest
